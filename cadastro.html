@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Denúncia.com</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <!-- Importando a fonte Roboto do Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="android/mipmap-xxxhdpi/ic_launcher.png" type="image/png">
+</head>
+<body>
+    <header>
+        <div class="logo">Denúncia.com</div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Início</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="cadastro.html">Cadastro</a></li>
+            </ul>
+           </header>
+    <main>
+        <form id="cadastroForm">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <label for="sobrenome">Sobrenome:</label>
+            <input type="text" id="sobrenome" name="sobrenome" required>
+
+            <label for="telefone">Telefone:</label>
+            <input type="tel" id="telefone" name="telefone" placeholder="Seu telefone" required pattern="\(\d{2}\) \d{4,5}-\d{4}" title="Formato esperado: (XX) XXXXX-XXXX ou (XX) XXXX-XXXX">
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" name="senha" required>
+
+            <label for="confirmarSenha">Repetir Senha:</label>
+            <input type="password" id="confirmarSenha" name="confirmarSenha" required>
+
+            <button type="submit">Cadastrar</button>
+        </form>
+    </main>
+    <script>
+        // Função para salvar cadastro no localStorage
+        function salvarCadastro(cadastroData) {
+            let cadastros = JSON.parse(localStorage.getItem('cadastros')) || [];
+            cadastros.push(cadastroData);
+            localStorage.setItem('cadastros', JSON.stringify(cadastros));
+        }
+
+        // Event listener para o formulário de cadastro
+        document.getElementById('cadastroForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const nome = document.getElementById('nome').value;
+            const sobrenome = document.getElementById('sobrenome').value;
+            const telefone = document.getElementById('telefone').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+
+            if (senha !== confirmarSenha) {
+                alert('As senhas não coincidem.');
+            } else {
+                const cadastroData = { nome, sobrenome, telefone, email, senha };
+                salvarCadastro(cadastroData);
+                alert('Cadastro realizado com sucesso!');
+                localStorage.setItem('usuarioLogado', JSON.stringify(cadastroData)); // Armazena o usuário logado
+
+                const denunciaPendente = JSON.parse(localStorage.getItem('denunciaPendente'));
+                if (denunciaPendente) {
+                    let denuncias = JSON.parse(localStorage.getItem('denuncias')) || [];
+                    denuncias.push(denunciaPendente);
+                    localStorage.setItem('denuncias', JSON.stringify(denuncias));
+                    localStorage.removeItem('denunciaPendente'); // Remove a denúncia pendente
+                }
+
+                window.location.href = 'perfil.html'; // Redireciona para a página de perfil
+            }
+        });
+    </script>
+</body>
+</html>
